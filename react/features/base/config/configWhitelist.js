@@ -1,3 +1,5 @@
+import extraConfigWhitelist from './extraConfigWhitelist';
+
 /**
  * The config keys to whitelist, the keys that can be overridden.
  * Currently we can only whitelist the first part of the properties, like
@@ -85,12 +87,17 @@ export default [
     'disableDeepLinking',
     'disableH264',
     'disableHPF',
+    'disableInviteFunctions',
     'disableLocalVideoFlip',
     'disableNS',
     'disableRemoteControl',
+    'disableRemoteMute',
     'disableRtx',
+    'disableSimulcast',
     'disableSuspendVideo',
+    'disableThirdPartyRequests',
     'displayJids',
+    'doNotStoreRoom',
     'e2eping',
     'enableDisplayNameInStats',
     'enableEmailInStats',
@@ -126,6 +133,7 @@ export default [
     'pcStatsInterval',
     'preferH264',
     'requireDisplayName',
+    'remoteVideoMenu',
     'resolution',
     'startAudioMuted',
     'startAudioOnly',
@@ -143,4 +151,4 @@ export default [
     'useStunTurn',
     'webrtcIceTcpDisable',
     'webrtcIceUdpDisable'
-];
+].concat(extraConfigWhitelist);
