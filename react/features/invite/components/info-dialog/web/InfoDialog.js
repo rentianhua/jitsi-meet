@@ -227,56 +227,63 @@ class InfoDialog extends Component<Props, State> {
             <div
                 className = 'info-dialog'
                 onMouseOver = { onMouseOver } >
-                <div className = 'info-dialog-column'>
-                    <h4 className = 'info-dialog-icon'>
-                        <Icon src = { IconInfo } />
-                    </h4>
-                </div>
+                {/*<div className = 'info-dialog-column'>*/}
+                    {/*<h4 className = 'info-dialog-icon'>*/}
+                        {/*<Icon src = { IconInfo } />*/}
+                    {/*</h4>*/}
+                {/*</div>*/}
                 <div className = 'info-dialog-column'>
                     <div className = 'info-dialog-title'>
-                        { t('info.title') }
+                        {/*{ t('info.tiinfo-labeltle') }*/}
+                        <p>会议主题: XXXXXXXXX</p>
                     </div>
                     <div className = 'info-dialog-conference-url'>
-                        <span className = 'info-label'>
-                            { t('info.conferenceURL') }
-                        </span>
-                        <span className = 'spacer'>&nbsp;</span>
-                        <span className = 'info-value'>
+                        {/*<span className = 'info-label'>*/}
+                            {/*{ t('info.conferenceURL') }*/}
+                        {/*</span>*/}
+                        {/*<span className = 'spacer'>&nbsp;</span>*/}
+                        <p>点击链接直接加入会议</p>
+                        <p className = 'info-value'>
                             <a
                                 className = 'info-dialog-url-text info-dialog-url-text-unselectable'
+                                style={{ color: '#4C9AFF' }}
                                 href = { this.props._inviteURL }
                                 onClick = { this._onClickURLText } >
                                 { decodeURI(this._getURLToDisplay()) }
                             </a>
-                        </span>
-                        <span className = 'info-dialog-url-icon'>
-                            <Icon
-                                onClick = { this._onCopyInviteUrl }
-                                size = { 18 }
-                                src = { IconCopy } />
-                        </span>
+                        </p>
+                        {/*<span className = 'info-dialog-url-icon'>*/}
+                            {/*<Icon*/}
+                                {/*onClick = { this._onCopyInviteUrl }*/}
+                                {/*size = { 18 }*/}
+                                {/*src = { IconCopy } />*/}
+                        {/*</span>*/}
                     </div>
-                    <div className = 'info-dialog-dial-in'>
-                        { this._renderDialInDisplay() }
-                    </div>
-                    { liveStreamViewURL && this._renderLiveStreamURL() }
-                    <div className = 'info-dialog-password'>
-                        <PasswordForm
-                            editEnabled = { this.state.passwordEditEnabled }
-                            locked = { this.props._locked }
-                            onSubmit = { this._onPasswordSubmit }
-                            password = { this.props._password }
-                            passwordNumberOfDigits = { this.props._passwordNumberOfDigits } />
-                    </div>
-                    <div className = 'info-dialog-action-links'>
-                        <div className = 'info-dialog-action-link'>
-                            <a
-                                className = 'info-copy'
-                                onClick = { this._onCopyInviteInfo }>
-                                { t('dialog.copy') }
-                            </a>
-                        </div>
-                        { this._renderPasswordAction() }
+                    {/*<div className = 'info-dialog-dial-in'>*/}
+                        {/*{ this._renderDialInDisplay() }*/}
+                    {/*</div>*/}
+                    {/*{ liveStreamViewURL && this._renderLiveStreamURL() }*/}
+                    {/*<div className = 'info-dialog-password'>*/}
+                        {/*<PasswordForm*/}
+                            {/*editEnabled = { this.state.passwordEditEnabled }*/}
+                            {/*locked = { this.props._locked }*/}
+                            {/*onSubmit = { this._onPasswordSubmit }*/}
+                            {/*password = { this.props._password }*/}
+                            {/*passwordNumberOfDigits = { this.props._passwordNumberOfDigits } />*/}
+                    {/*</div>*/}
+                    {/*<div className = 'info-dialog-action-links'>*/}
+                        {/*<div className = 'info-dialog-action-link'>*/}
+                            {/*<a*/}
+                                {/*className = 'info-copy'*/}
+                                {/*onClick = { this._onCopyInviteInfo }>*/}
+                                {/*{ t('dialog.copy') }*/}
+                            {/*</a>*/}
+                        {/*</div>*/}
+                        {/*{ this._renderPasswordAction() }*/}
+                    {/*</div>*/}
+                    <p>会议ID: 586 196 256</p>
+                    <div style={{ 'text-align': 'center' }}>
+                        <span className="copyBtn">复制</span>
                     </div>
                 </div>
                 <textarea

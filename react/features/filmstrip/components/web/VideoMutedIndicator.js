@@ -33,7 +33,7 @@ class VideoMutedIndicator extends Component<Props> {
                 className = 'videoMuted toolbar-icon'
                 icon = { IconCameraDisabled }
                 iconId = 'camera-disabled'
-                iconSize = { 13 }
+                iconSize = { 30 }
                 tooltipKey = 'videothumbnail.videomute'
                 tooltipPosition = { this.props.tooltipPosition } />
         );

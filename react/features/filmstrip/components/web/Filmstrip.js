@@ -3,7 +3,7 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
-
+import axios from 'axios';
 import {
     createShortcutEvent,
     createToolbarEvent,
@@ -16,11 +16,9 @@ import { dockToolbox } from '../../../toolbox';
 
 import { setFilmstripHovered, setFilmstripVisible } from '../../actions';
 import { shouldRemoteVideosBeVisible } from '../../functions';
-
+import { getParticipantCount } from '../../../base/participants';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
-
 import Toolbar from './Toolbar';
-
 declare var APP: Object;
 declare var interfaceConfig: Object;
 
@@ -111,6 +109,10 @@ class Filmstrip extends Component <Props> {
 
     _onMouseOver: Function;
 
+    state = {
+        videoType: 1,
+        invitingList: []
+    }
     /**
      * Initializes a new {@code Filmstrip} instance.
      *
@@ -119,7 +121,6 @@ class Filmstrip extends Component <Props> {
      */
     constructor(props: Props) {
         super(props);
-
         // Debounce the method for dispatching the new filmstrip handled state
         // so that it does not get called with each mouse movement event. This
         // also works around an issue where mouseout and then a mouseover event
@@ -136,6 +137,7 @@ class Filmstrip extends Component <Props> {
         this._onMouseOver = this._onMouseOver.bind(this);
         this._onShortcutToggleFilmstrip = this._onShortcutToggleFilmstrip.bind(this);
         this._onToolbarToggleFilmstrip = this._onToolbarToggleFilmstrip.bind(this);
+        // this.getInvitingList = this.getInvitingList.bind(this);
     }
 
     /**
@@ -153,6 +155,24 @@ class Filmstrip extends Component <Props> {
             );
         }
     }
+
+    // getInvitingList() {
+    //     axios.post('https://test.lawbal.com/lvbao/conference/user/list', {
+    //         conferenceId: window.location.pathname.substr(1)
+    //     }).then((res) => {
+    //         if (res.data.code === 0) {
+    //             let invitingList;
+    //             invitingList =  res.data.list.filter(item => {
+    //                 return item.status === '1'
+    //             });
+    //             localStorage.setItem('invitingList', JSON.stringify(invitingList))
+    //             this.setState({
+    //                 videoType: 2,
+    //                 invitingList: invitingList
+    //             }) // this.setState不知道为啥没生效, 不过可以触发render, 先放到localstorage里
+    //         }
+    //     })
+    // }
 
     /**
      * Implements React's {@link Component#componentDidUpdate}.
@@ -176,8 +196,9 @@ class Filmstrip extends Component <Props> {
         // DOM. As such, when updateDOMProperties gets called, only attributes
         // will get updated without replacing the DOM. If the known DOM gets
         // modified, then the views will get blown away.
-
+        const { videoType } = this.state;
         const filmstripStyle = { };
+        const videoTypeMenuStyle = { };
         const filmstripRemoteVideosContainerStyle = {};
         let remoteVideoContainerClassName = 'remote-videos-container';
 
@@ -185,7 +206,8 @@ class Filmstrip extends Component <Props> {
         case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
             // Adding 18px for the 2px margins, 2px borders on the left and right and 5px padding on the left and right.
             // Also adding 7px for the scrollbar.
-            filmstripStyle.maxWidth = (interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120) + 25;
+            // filmstripStyle.maxWidth = (interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120) + 25;
+            filmstripStyle.maxWidth = 204;
             break;
         case LAYOUTS.TILE_VIEW: {
             // The size of the side margins for each tile as set in CSS.
@@ -194,7 +216,7 @@ class Filmstrip extends Component <Props> {
             if (_rows > _columns) {
                 remoteVideoContainerClassName += ' has-overflow';
             }
-
+            videoTypeMenuStyle.display = 'none';
             filmstripRemoteVideosContainerStyle.width = _filmstripWidth;
             break;
         }
@@ -211,44 +233,73 @@ class Filmstrip extends Component <Props> {
         if (!this.props._hideToolbar) {
             toolbar = this.props._filmstripOnly ? <Toolbar /> : this._renderToggleButton();
         }
-
+        console.log(this.props._invitingList)
+        /********************************Ater********************************/
         return (
             <div
                 className = { `filmstrip ${this.props._className}` }
                 style = { filmstripStyle }>
-                { toolbar }
                 <div
                     className = { this.props._videosClassName }
                     id = 'remoteVideos'>
-                    <div
-                        className = 'filmstrip__videos'
-                        id = 'filmstripLocalVideo'
-                        onMouseOut = { this._onMouseOut }
-                        onMouseOver = { this._onMouseOver }>
-                        <div id = 'filmstripLocalVideoThumbnail' />
+                    <div className = 'videoTypeMenu' style = { videoTypeMenuStyle }>
+                        <p onClick = { () => this.handleChangeVideoType(1) }>已加入 ({ this.props.count })</p>
+                        <p onClick = { () => this.handleChangeVideoType(2) }>邀请中 ({ this.props._invitingList.length })</p>
+                        <div className = 'menu-bar' style={{ 'left': videoType === 1 ? '15%' : '55%' }} />
                     </div>
-                    <div
-                        className = { remoteVideosWrapperClassName }
-                        id = 'filmstripRemoteVideos'>
-                        {/*
+                    { toolbar }
+                    <div className = { videoType === 2 && !this.props._tileViewEnabled ? 'hasJoin hidden' : 'hasJoin' }>
+                        <div
+                            className = 'filmstrip__videos'
+                            id = 'filmstripLocalVideo'
+                            onMouseOut = { this._onMouseOut }
+                            onMouseOver = { this._onMouseOver }>
+                            <div id = 'filmstripLocalVideoThumbnail' />
+                        </div>
+                        <div
+                            className = { remoteVideosWrapperClassName }
+                            id = 'filmstripRemoteVideos'>
+                            {/*
                           * XXX This extra video container is needed for
                           * scrolling thumbnails in Firefox; otherwise, the flex
                           * thumbnails resize instead of causing overflow.
                           */}
-                        <div
-                            className = { remoteVideoContainerClassName }
-                            id = 'filmstripRemoteVideosContainer'
-                            onMouseOut = { this._onMouseOut }
-                            onMouseOver = { this._onMouseOver }
-                            style = { filmstripRemoteVideosContainerStyle }>
-                            <div id = 'localVideoTileViewContainer' />
+                            <div
+                                className = { remoteVideoContainerClassName }
+                                id = 'filmstripRemoteVideosContainer'
+                                onMouseOut = { this._onMouseOut }
+                                onMouseOver = { this._onMouseOver }
+                                style = { filmstripRemoteVideosContainerStyle }>
+                                <div id = 'localVideoTileViewContainer' />
+                            </div>
                         </div>
+                    </div>
+                    <div className = { videoType === 1 ? 'hasInvite hidden' : 'hasInvite' }>
+                        {
+                            this.props._invitingList.length > 0 ? this.props._invitingList.map((item, index) => (
+                                <div className = 'video-item' key = { index }>
+                                    <div className = 'avatar-wrapper'>
+                                        <img src = { item.userHeadUrl } alt="avatar" />
+                                    </div>
+                                    <p className = 'userName'>{ item.userName || '用户' }</p>
+                                </div>
+                            )) : <div className = 'hasInvite-empty'>
+                                <p>暂无邀请中的人~</p>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
         );
     }
 
+    /********************************Ater********************************/
+    handleChangeVideoType = (type) => { // type === 1 已加入 type === 2 已邀请
+        this.setState({
+            videoType: type
+        })
+    }
+    /********************************Ater********************************/
     /**
      * Dispatches an action to change the visibility of the filmstrip.
      *
@@ -358,7 +409,7 @@ class Filmstrip extends Component <Props> {
         );
     }
 }
-
+export const Filmstriper = new Filmstrip();
 /**
  * Maps (parts of) the Redux state to the associated {@code Filmstrip}'s props.
  *
@@ -391,7 +442,10 @@ function _mapStateToProps(state) {
         _hovered: hovered,
         _rows: gridDimensions.rows,
         _videosClassName: videosClassName,
-        _visible: visible
+        _visible: visible,
+        count: getParticipantCount(state),
+        _tileViewEnabled: state['features/video-layout'].tileViewEnabled,
+        _invitingList: state['features/base/conference'].invitingList
     };
 }
 

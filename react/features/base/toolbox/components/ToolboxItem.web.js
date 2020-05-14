@@ -40,9 +40,12 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
         let children = (
             <Fragment>
                 { this._renderIcon() }
-                { showLabel && <span>
+                {/*{ showLabel && <span>*/}
+                    {/*{ this.label }*/}
+                {/*</span> }*/}
+                <span style = {{ color: '#737d7f', fontWeight: 400, fontSize: '13px' }}>
                     { this.label }
-                </span> }
+                </span>
                 { elementAfter }
             </Fragment>
         );

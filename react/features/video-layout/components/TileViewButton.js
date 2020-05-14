@@ -1,58 +1,36 @@
 // @flow
 
-import type { Dispatch } from 'redux';
-
+// import type { Dispatch } from 'redux';
+import React, { Component } from 'react';
 import {
     createToolbarEvent,
     sendAnalytics
 } from '../../analytics';
-import { translate } from '../../base/i18n';
-import { IconTileView } from '../../base/icons';
+// import { translate } from '../../base/i18n';
+import { PictureMode, ListMode } from '../../base/icons';
 import { connect } from '../../base/redux';
-import {
-    AbstractButton,
-    type AbstractButtonProps
-} from '../../base/toolbox';
-
 import { setTileView } from '../actions';
 import logger from '../logger';
+import { Icon } from '../../base/icons';
 
-/**
- * The type of the React {@code Component} props of {@link TileViewButton}.
- */
-type Props = AbstractButtonProps & {
+class TileViewButton extends Component {
+    constructor(props) {
+        super(props);
+    }
 
-    /**
-     * Whether or not tile view layout has been enabled as the user preference.
-     */
-    _tileViewEnabled: boolean,
+    render () {
+        const { _tileViewEnabled } = this.props;
+        return (
+            <div>
+                {
+                    _tileViewEnabled ? <Icon src = { ListMode } className= 'toggleListType' onClick={ this._handleClick } /> :
+                        <Icon src = { PictureMode } className= 'toggleListType' onClick={ this._handleClick } />
+                }
+            </div>
+        )
+    }
 
-    /**
-     * Used to dispatch actions from the buttons.
-     */
-    dispatch: Dispatch<any>
-};
-
-/**
- * Component that renders a toolbar button for toggling the tile layout view.
- *
- * @extends AbstractButton
- */
-class TileViewButton<P: Props> extends AbstractButton<P, *> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.tileView';
-    icon = IconTileView;
-    label = 'toolbar.enterTileView';
-    toggledLabel = 'toolbar.exitTileView';
-    tooltip = 'toolbar.tileViewToggle';
-
-    /**
-     * Handles clicking / pressing the button.
-     *
-     * @override
-     * @protected
-     * @returns {void}
-     */
-    _handleClick() {
+    _handleClick = () => {
         const { _tileViewEnabled, dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent(
@@ -73,24 +51,15 @@ class TileViewButton<P: Props> extends AbstractButton<P, *> {
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
-        return this.props._tileViewEnabled;
-    }
+    // _isToggled() {
+    //     return this.props._tileViewEnabled;
+    // }
 }
 
-/**
- * Maps (parts of) the redux state to the associated props for the
- * {@code TileViewButton} component.
- *
- * @param {Object} state - The Redux state.
- * @returns {{
- *     _tileViewEnabled: boolean
- * }}
- */
 function _mapStateToProps(state) {
     return {
         _tileViewEnabled: state['features/video-layout'].tileViewEnabled
     };
 }
 
-export default translate(connect(_mapStateToProps)(TileViewButton));
+export default connect(_mapStateToProps)(TileViewButton);

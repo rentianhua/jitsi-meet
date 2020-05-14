@@ -78,7 +78,7 @@ export default class LocalVideo extends SmallVideo {
         containerSpan.innerHTML = `
             <div class = 'videocontainer__background'></div>
             <span id = 'localVideoWrapper'></span>
-            <div class = 'videocontainer__toolbar'></div>
+            <div class = 'videocontainer__toolbar' style = 'bottom: 2px'></div>
             <div class = 'videocontainer__toptoolbar'></div>
             <div class = 'videocontainer__hoverOverlay'></div>
             <div class = 'displayNameContainer'></div>

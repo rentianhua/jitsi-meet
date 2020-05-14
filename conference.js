@@ -14,12 +14,14 @@ import UIEvents from './service/UI/UIEvents';
 import UIUtil from './modules/UI/util/UIUtil';
 import { createTaskQueue } from './modules/util/helpers';
 import * as JitsiMeetConferenceEvents from './ConferenceEvents';
-import { recordingController } from './react/features/local-recording/controller';
+// import { recordingController } from './react/features/local-recording/controller';
+import { Filmstriper } from './react/features/filmstrip/components/web/Filmstrip.js';
 
 import {
     createDeviceChangedEvent,
     createStartSilentEvent,
     createScreenSharingEvent,
+    createStreamSwitchDelayEvent,
     createTrackMutedEvent,
     sendAnalytics
 } from './react/features/analytics';
@@ -113,7 +115,6 @@ import {
 import { getJitsiMeetGlobalNS } from './react/features/base/util';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
-import { setE2EEKey } from './react/features/e2ee';
 import {
     maybeOpenFeedbackDialog,
     submitFeedback
@@ -162,12 +163,8 @@ const commands = {
     CUSTOM_ROLE: 'custom-role',
     EMAIL: EMAIL_COMMAND,
     ETHERPAD: 'etherpad',
-    ETHERDRAW: 'etherdraw', /** ****************Ater********************************/
     SHARED_VIDEO: 'shared-video'
 };
-
-/** ****************Ater********************************/
-const ISETHERDRAW_ON = false;
 
 /**
  * Open Connection. When authentication failed it shows auth dialog.
@@ -476,6 +473,11 @@ export default {
     localVideo: null,
 
     /**
+     * The key used for End-To-End Encryption.
+     */
+    e2eeKey: undefined,
+
+    /**
      * Creates local media tracks and connects to a room. Will show error
      * dialogs in case accessing the local microphone and/or camera failed. Will
      * show guidance overlay for users on how to give access to camera and/or
@@ -732,13 +734,6 @@ export default {
                         titleKey: 'notify.startSilentTitle'
                     }));
                 }
-
-                /** ****************Ater********************************/
-                if (ISETHERDRAW_ON) {
-                    APP.UI.initEtherdraw(this.getMyUserId());
-                }
-
-                /** ****************Ater********************************/
 
                 // XXX The API will take care of disconnecting from the XMPP
                 // server (and, thus, leaving the room) on unload.
@@ -1007,24 +1002,10 @@ export default {
         return room.getSpeakerStats();
     },
 
-    /**
-     * Returns the local recording stats.
-     *
-     * @returns {RecordingStats}
-     */
-    getLocalRecordingStats() {
-        return recordingController.getLocalStats();
-    },
 
-    /**
-     * Signals the participants to stop local recording.
-     *
-     * @returns {boolean}
-     */
-    setStopLocalRecording() {
+    getInvitingList() {
         try {
-            recordingController.stopRecording();
-
+            Filmstriper.getInvitingList();
             return true;
         } catch (e) {
             return false;
@@ -1233,14 +1214,11 @@ export default {
             items[key] = param[1];
         }
 
-        if (typeof items.e2eekey !== undefined) {
-            APP.store.dispatch(setE2EEKey(items.e2eekey));
+        this.e2eeKey = items.e2eekey;
 
-            // Clean URL in browser history.
-            const cleanUrl = window.location.href.split('#')[0];
+        logger.debug(`New E2EE key: ${this.e2eeKey}`);
 
-            history.replaceState(history.state, document.title, cleanUrl);
-        }
+        this._room.setE2EEKey(this.e2eeKey);
     },
 
     /**
@@ -1540,13 +1518,6 @@ export default {
                 .then(() => {
                     sendAnalytics(createScreenSharingEvent('stopped'));
                     logger.log('Screen sharing stopped.');
-
-                    /** ****************Ater********************************/
-                    if (ISETHERDRAW_ON) {
-                        APP.UI.emitEvent(UIEvents.ETHERDRAW_CLICKED, null);
-                    }
-
-                    /** ****************Ater********************************/
                 })
                 .catch(error => {
                     logger.error('failed to switch back to local video', error);
@@ -1885,13 +1856,6 @@ export default {
                 }
                 sendAnalytics(createScreenSharingEvent('started'));
                 logger.log('Screen sharing started');
-
-                /** ****************Ater********************************/
-                if (ISETHERDRAW_ON) {
-                    APP.UI.emitEvent(UIEvents.ETHERDRAW_CLICKED, this.getMyUserId());
-                }
-
-                /** ****************Ater********************************/
             })
             .catch(error => {
                 this.videoSwitchInProgress = false;
@@ -2311,6 +2275,18 @@ export default {
                 }
             });
         });
+
+        /* eslint-disable max-params */
+        APP.UI.addListener(
+            UIEvents.RESOLUTION_CHANGED,
+            (id, oldResolution, newResolution, delay) => {
+                sendAnalytics(createStreamSwitchDelayEvent(
+                    {
+                        'old_resolution': oldResolution,
+                        'new_resolution': newResolution,
+                        value: delay
+                    }));
+            });
 
         APP.UI.addListener(UIEvents.AUTH_CLICKED, () => {
             AuthHandler.authenticate(room);

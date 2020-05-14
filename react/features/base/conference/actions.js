@@ -28,6 +28,7 @@ import {
     getBackendSafeRoomName,
     getJitsiMeetGlobalNS
 } from '../util';
+import axios from 'axios';
 
 import {
     AUTH_STATUS_CHANGED,
@@ -47,6 +48,8 @@ import {
     SET_FOLLOW_ME,
     SET_MAX_RECEIVER_VIDEO_QUALITY,
     SET_PASSWORD,
+    SET_USERINFO,
+    SET_INVITING_LIST,
     SET_PASSWORD_FAILED,
     SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
     SET_ROOM,
@@ -697,6 +700,38 @@ export function setPassword(
         }
     };
 }
+
+export function userInfo(userId: string, roomNumber: string) {
+    return (dispatch: Dispatch<any>, getState: Function): ?Promise<void> => {
+        dispatch({
+            type: SET_USERINFO,
+            userId,
+            roomNumber
+        });
+    };
+}
+
+export function setInvitingList(conferenceId: String) {
+    return (dispatch: Dispatch<any>, getState: Function): ?Promise<void> => {
+        console.log('action setInvitingList')
+        axios.post('https://test.lawbal.com/lvbao/conference/user/list', {
+            conferenceId: conferenceId
+        }).then((res) => {
+            if (res.data.code === 0) {
+                let invitingList;
+                invitingList =  res.data.list.filter(item => {
+                    return item.status === '1'
+                });
+                localStorage.setItem('invitingList', JSON.stringify(invitingList));
+                dispatch({
+                    type: SET_INVITING_LIST,
+                    invitingList
+                });
+            }
+        })
+    };
+}
+
 
 /**
  * Sets the max frame height the user prefers to receive from remote participant

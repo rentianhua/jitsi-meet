@@ -29,7 +29,6 @@ const ALWAYS_ON_TOP_FILENAMES = [
 const commands = {
     avatarUrl: 'avatar-url',
     displayName: 'display-name',
-    e2eeKey: 'e2ee-key',
     email: 'email',
     hangup: 'video-hangup',
     password: 'password',
@@ -238,8 +237,6 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * information about the initial devices that will be used in the call.
      * @param {Object} [options.userInfo] - Object containing information about
      * the participant opening the meeting.
-     * @param {string}  [options.e2eeKey] - The key used for End-to-End encryption.
-     * THIS IS EXPERIMENTAL.
      */
     constructor(domain, ...args) {
         super();
@@ -255,8 +252,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             onload = undefined,
             invitees,
             devices,
-            userInfo,
-            e2eeKey
+            userInfo
         } = parseArguments(args);
 
         this._parentNode = parentNode;
@@ -281,7 +277,6 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         if (Array.isArray(invitees) && invitees.length > 0) {
             this.invite(invitees);
         }
-        this._tmpE2EEKey = e2eeKey;
         this._isLargeVideoVisible = true;
         this._numberOfParticipants = 0;
         this._participants = {};
@@ -435,17 +430,12 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             const userID = data.id;
 
             switch (name) {
-            case 'video-conference-joined': {
-                if (typeof this._tmpE2EEKey !== 'undefined') {
-                    this.executeCommand(commands.e2eeKey, this._tmpE2EEKey);
-                    this._tmpE2EEKey = undefined;
-                }
-
+            case 'video-conference-joined':
                 this._myUserID = userID;
                 this._participants[userID] = {
                     avatarURL: data.avatarURL
                 };
-            }
+                console.log('video-conference-joined')
 
             // eslint-disable-next-line no-fallthrough
             case 'participant-joined': {
@@ -962,6 +952,13 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         });
     }
 
+    setUserInfo(info) {
+        return this._transport.sendRequest({
+            name: 'setUserInfo',
+            info
+        });
+    }
+
     /**
      * Returns Hits stop local recording event.
      *
@@ -970,6 +967,13 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     setStopLocalRecording() {
         return this._transport.sendRequest({
             name: 'setStopLocalRecording'
+        });
+    }
+
+    getInvitingList(conferenceId) {
+        return this._transport.sendRequest({
+            name: 'getInvitingList',
+            conferenceId
         });
     }
 

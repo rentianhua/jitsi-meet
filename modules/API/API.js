@@ -8,10 +8,11 @@ import {
 import {
     sendTones,
     setPassword,
-    setSubject
+    setSubject,
+    userInfo,
+    setInvitingList
 } from '../../react/features/base/conference';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
-import { setE2EEKey } from '../../react/features/e2ee';
 import { invite } from '../../react/features/invite';
 import { toggleTileView } from '../../react/features/video-layout';
 import { getJitsiMeetTransport } from '../transport';
@@ -167,10 +168,6 @@ function initCommands() {
             } catch (err) {
                 logger.error('Failed sending endpoint text message', err);
             }
-        },
-        'e2ee-key': key => {
-            logger.debug('Set E2EE key command received');
-            APP.store.dispatch(setE2EEKey(key));
         }
     };
     transport.on('event', ({ data, name }) => {
@@ -236,12 +233,16 @@ function initCommands() {
         case 'is-video-available':
             callback(videoAvailable);
             break;
-        case 'getLocalRecordingStats':
-            callback(APP.conference.getLocalRecordingStats());
-            break;
-        case 'setStopLocalRecording':
-            callback(APP.conference.setStopLocalRecording());
-            break;
+        case 'getInvitingList':
+            APP.store.dispatch(setInvitingList(request.conferenceId));
+        case 'setUserInfo':
+            const { info } = request;
+            if (info.userId && info.roomNumber) {
+                APP.store.dispatch(userInfo(
+                    info.userId,
+                    info.roomNumber
+                ));
+            }
         default:
             return false;
         }
@@ -810,17 +811,6 @@ class API {
         this._sendEvent({
             name: 'tile-view-changed',
             enabled
-        });
-    }
-
-    /**
-     * Returns get local recording status.
-     *
-     * @returns {Promise}
-     */
-    getLocalRecordingStats() {
-        return this._sendEvent.sendRequest({
-            name: 'getLocalRecordingStats'
         });
     }
 

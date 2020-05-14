@@ -9,16 +9,19 @@ import { Container } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { ChatButton } from '../../../chat';
-import { InfoDialogButton } from '../../../invite';
+import { InviteButton } from '../../../invite';
 
 import { isToolboxVisible } from '../../functions';
 
 import AudioMuteButton from '../AudioMuteButton';
 import HangupButton from '../HangupButton';
+import { setUserInfo } from '../../actions.native'
 
-import OverflowMenuButton from './OverflowMenuButton';
+// import OverflowMenuButton from './OverflowMenuButton';
 import styles from './styles';
 import VideoMuteButton from '../VideoMuteButton';
+import ToggleCameraButton from './ToggleCameraButton';
+import PersonalManagementButton from './PersonalManagementButton';
 
 /**
  * The type of {@link Toolbox}'s React {@code Component} props.
@@ -46,6 +49,63 @@ type Props = {
     dispatch: Function
 };
 
+const buttonStyles = {
+    iconStyle: {
+        alignSelf: 'center',
+        color: '#555555',
+        fontSize: 50
+    },
+    style: {
+        backgroundColor: 'transparent',
+        borderRadius: 25,
+        borderWidth: 0,
+        flex: 0,
+        flexDirection: "row",
+        height: 50,
+        justifyContent: "center",
+        marginHorizontal: 7,
+        width: 50,
+    }
+}
+
+const hangupButtonStyles = {
+    iconStyle: {
+        alignSelf: 'center',
+        color: '#FFFFFF',
+        fontSize: 50
+    },
+    style: {
+        backgroundColor: 'transparent',
+        borderRadius: 25,
+        borderWidth: 0,
+        flex: 0,
+        flexDirection: "row",
+        height: 50,
+        justifyContent: "center",
+        marginHorizontal: 7,
+        width: 50,
+    }
+}
+
+const toggledButtonStyles = {
+    iconStyle: {
+        alignSelf: 'center',
+        color: '#FFFFFF',
+        fontSize: 50
+    },
+    style: {
+        backgroundColor: 'transparent',
+        borderRadius: 25,
+        borderWidth: 0,
+        flex: 0,
+        flexDirection: "row",
+        height: 50,
+        justifyContent: "center",
+        marginHorizontal: 7,
+        width: 50,
+    }
+}
+
 /**
  * Implements the conference toolbox on React Native.
  */
@@ -56,6 +116,7 @@ class Toolbox extends PureComponent<Props> {
      * @inheritdoc
      * @returns {ReactElement}
      */
+
     render() {
         return (
             <Container
@@ -106,37 +167,47 @@ class Toolbox extends PureComponent<Props> {
      */
     _renderToolbar() {
         const { _chatEnabled, _styles } = this.props;
-        const { buttonStyles, buttonStylesBorderless, hangupButtonStyles, toggledButtonStyles } = _styles;
-
+        const { buttonStylesBorderless } = _styles;
         return (
             <View
+                accessibilityRole = 'toolbar'
                 pointerEvents = 'box-none'
                 style = { styles.toolbar }>
                 {/*{*/}
-                {/*    _chatEnabled*/}
-                {/*        && <ChatButton*/}
-                {/*            styles = { buttonStylesBorderless }*/}
-                {/*            toggledStyles = {*/}
-                {/*                this._getChatButtonToggledStyle(toggledButtonStyles)*/}
-                {/*            } />*/}
+                    {/*_chatEnabled*/}
+                        {/*&& <ChatButton*/}
+                            {/*styles = { buttonStylesBorderless }*/}
+                            {/*toggledStyles = {*/}
+                                {/*this._getChatButtonToggledStyle(toggledButtonStyles)*/}
+                            {/*} />*/}
                 {/*}*/}
-                {/*{*/}
-                {/*    !_chatEnabled*/}
-                {/*        && <InfoDialogButton*/}
-                {/*            styles = { buttonStyles }*/}
-                {/*            toggledStyles = { toggledButtonStyles } />*/}
-                {/*}*/}
+                {
+                    !_chatEnabled
+                        && <InviteButton
+                            styles = { buttonStyles }
+                            toggledStyles = { toggledButtonStyles } />
+                }
                 <AudioMuteButton
+                    styles = { buttonStyles }
+                    toggledStyles = { toggledButtonStyles } />
+                <VideoMuteButton
                     styles = { buttonStyles }
                     toggledStyles = { toggledButtonStyles } />
                 <HangupButton
                     styles = { hangupButtonStyles } />
-                <VideoMuteButton
+                <ToggleCameraButton
                     styles = { buttonStyles }
-                    toggledStyles = { toggledButtonStyles } />
-                <OverflowMenuButton
-                    styles = { buttonStylesBorderless }
-                    toggledStyles = { toggledButtonStyles } />
+                    toggledStyles = { toggledButtonStyles }
+                />
+                {/*{*/}
+                    {/*_isGroup ? <PersonalManagementButton*/}
+                        {/*styles = { buttonStyles }*/}
+                        {/*toggledStyles = { toggledButtonStyles }*/}
+                    {/*/> : null*/}
+                {/*}*/}
+                {/*<OverflowMenuButton*/}
+                    {/*styles = { buttonStylesBorderless }*/}
+                    {/*toggledStyles = { toggledButtonStyles } />*/}
             </View>
         );
     }
@@ -160,6 +231,7 @@ function _mapStateToProps(state: Object): Object {
         _chatEnabled: getFeatureFlag(state, CHAT_ENABLED, true),
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
         _visible: isToolboxVisible(state)
+        // _isGroup: state['features/base/conference'].isGroup
     };
 }
 

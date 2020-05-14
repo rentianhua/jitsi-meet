@@ -73,7 +73,7 @@ function _mapStateToProps(state) {
     const participantCount = getParticipantCount(state);
 
     return {
-        _showParticipantCount: participantCount > 0,
+        _showParticipantCount: participantCount > 2,
         _subject: getConferenceName(state),
         _visible: isToolboxVisible(state)
     };

@@ -82,3 +82,6 @@ export { default as IconVideoQualityLD } from './LD.svg';
 export { default as IconVideoQualitySD } from './SD.svg';
 export { default as IconVolume } from './volume.svg';
 export { default as IconVolumeEmpty } from './volume-empty.svg';
+export { default as PictureMode } from './pictureMode.svg';
+export { default as ListMode } from './listMode.svg';
+export { default as PersonnelManagement } from './personnel-management.svg';

@@ -76,10 +76,10 @@ class StatusIndicators extends Component<Props> {
         }
 
         return (
-            <div>
-                { showAudioMutedIndicator ? <AudioMutedIndicator tooltipPosition = { tooltipPosition } /> : null }
-                { showVideoMutedIndicator ? <VideoMutedIndicator tooltipPosition = { tooltipPosition } /> : null }
-                { _showModeratorIndicator ? <ModeratorIndicator tooltipPosition = { tooltipPosition } /> : null }
+            <div style = {{ 'display': 'flex', 'justify-content': 'space-between', 'width': '90%', 'margin': '0 auto' }}>
+                { showAudioMutedIndicator ? <AudioMutedIndicator tooltipPosition = { tooltipPosition } /> : <span /> }
+                { showVideoMutedIndicator ? <VideoMutedIndicator tooltipPosition = { tooltipPosition } /> : <span /> }
+                {/*{ _showModeratorIndicator ? <ModeratorIndicator tooltipPosition = { tooltipPosition } /> : null }*/}
             </div>
         );
     }

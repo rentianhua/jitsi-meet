@@ -33,7 +33,6 @@ import { OverflowMenuItem } from '../../../base/toolbox';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { VideoBlurButton } from '../../../blur';
 import { ChatCounter, toggleChat } from '../../../chat';
-import { E2EEButton } from '../../../e2ee';
 import { SharedDocumentButton } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';
 import {
@@ -349,7 +348,7 @@ class Toolbox extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { _visible, _visibleButtons } = this.props;
+        const { _visible, _visibleButtons, _rightMenuVisible } = this.props;
         const rootClassNames = `new-toolbox ${_visible ? 'visible' : ''} ${
             _visibleButtons.size ? '' : 'no-buttons'}`;
 
@@ -358,7 +357,9 @@ class Toolbox extends Component<Props, State> {
                 className = { rootClassNames }
                 id = 'new-toolbox'
                 onMouseOut = { this._onMouseOut }
-                onMouseOver = { this._onMouseOver }>
+                onMouseOver = { this._onMouseOver }
+                style = {{ width: _rightMenuVisible ? 'calc(100% - 208px' : '100%' }}
+            >
                 <div className = 'toolbox-background' />
                 { this._renderToolboxContent() }
             </div>
@@ -905,8 +906,7 @@ class Toolbox extends Component<Props, State> {
         if (isInOverflowMenu) {
             return (
                 <OverflowMenuItem
-                    accessibilityLabel
-                        = { t('toolbar.accessibilityLabel.shareYourScreen') }
+                    accessibilityLabel = { t('toolbar.accessibilityLabel.shareYourScreen') }
                     disabled = { _desktopSharingEnabled }
                     icon = { IconShareDesktop }
                     iconId = 'share-desktop'
@@ -927,10 +927,10 @@ class Toolbox extends Component<Props, State> {
 
         return (
             <ToolbarButton
-                accessibilityLabel
-                    = { t('toolbar.accessibilityLabel.shareYourScreen') }
+                accessibilityLabel = { t('toolbar.accessibilityLabel.shareYourScreen') }
                 disabled = { !_desktopSharingEnabled }
                 icon = { IconShareDesktop }
+                label = '共享桌面'
                 onClick = { this._onToolbarToggleScreenshare }
                 toggled = { _screensharing }
                 tooltip = { tooltip } />
@@ -1013,10 +1013,6 @@ class Toolbox extends Component<Props, State> {
                     key = 'stats'
                     onClick = { this._onToolbarOpenSpeakerStats }
                     text = { t('toolbar.speakerStats') } />,
-            this._shouldShowButton('e2ee')
-                && <E2EEButton
-                    key = 'e2ee'
-                    showLabel = { true } />,
             this._shouldShowButton('feedback')
                 && _feedbackConfigured
                 && <OverflowMenuItem
@@ -1240,11 +1236,11 @@ class Toolbox extends Component<Props, State> {
         return (
             <div className = 'toolbox-content'>
                 <div className = 'button-group-left'>
-                    { buttonsLeft.indexOf('desktop') !== -1
-                        && this._renderDesktopSharingButton() }
+                    { this._renderDesktopSharingButton() }
                     { buttonsLeft.indexOf('raisehand') !== -1
                         && <ToolbarButton
                             accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
+                            label = '举手发言'
                             icon = { IconRaisedHand }
                             onClick = { this._onToolbarToggleRaiseHand }
                             toggled = { _raisedHand }
@@ -1259,6 +1255,10 @@ class Toolbox extends Component<Props, State> {
                                 tooltip = { t('toolbar.chat') } />
                             <ChatCounter />
                         </div> }
+                    {/*{*/}
+                        {/*buttonsRight.indexOf('info') !== -1*/}
+                        {/*&& <InfoDialogButton />*/}
+                    {/*}*/}
                     {
                         buttonsLeft.indexOf('closedcaptions') !== -1
                             && <ClosedCaptionButton />
@@ -1266,8 +1266,7 @@ class Toolbox extends Component<Props, State> {
                 </div>
                 <div className = 'button-group-center'>
                     { this._renderAudioButton() }
-                    <HangupButton
-                        visible = { this._shouldShowButton('hangup') } />
+                    <HangupButton visible = { this._shouldShowButton('hangup') } />
                     { this._renderVideoButton() }
                 </div>
                 <div className = 'button-group-right'>
@@ -1286,10 +1285,6 @@ class Toolbox extends Component<Props, State> {
                             icon = { IconInvite }
                             onClick = { this._onToolbarOpenInvite }
                             tooltip = { t('toolbar.invite') } /> }
-                    {
-                        buttonsRight.indexOf('info') !== -1
-                            && <InfoDialogButton />
-                    }
                     { buttonsRight.indexOf('overflowmenu') !== -1
                         && <OverflowMenuButton
                             isOpen = { _overflowMenuVisible }
@@ -1345,6 +1340,7 @@ function _mapStateToProps(state) {
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
     const addPeopleEnabled = isAddPeopleEnabled(state);
     const dialOutEnabled = isDialOutEnabled(state);
+    const { visible } = state['features/filmstrip'];
 
     let desktopSharingDisabledTooltipKey;
 
@@ -1390,7 +1386,8 @@ function _mapStateToProps(state) {
             || sharedVideoStatus === 'start'
             || sharedVideoStatus === 'pause',
         _visible: isToolboxVisible(state),
-        _visibleButtons: equals(visibleButtons, buttons) ? visibleButtons : buttons
+        _visibleButtons: equals(visibleButtons, buttons) ? visibleButtons : buttons,
+        _rightMenuVisible: visible
     };
 }
 

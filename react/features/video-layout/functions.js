@@ -74,13 +74,6 @@ export function shouldDisplayTileView(state: Object = {}) {
     return Boolean(
         state['features/video-layout']
             && state['features/video-layout'].tileViewEnabled
-
-        /** ****************Ater********************************/
-            && (!state['features/etherdraw']
-            || !state['features/etherdraw'].editing)
-
-        /** ****************Ater********************************/
-
             && (!state['features/etherpad']
                 || !state['features/etherpad'].editing)
 

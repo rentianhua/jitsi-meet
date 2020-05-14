@@ -16,6 +16,7 @@ import {
     LocalRecordingInfoDialog
 } from '../../local-recording/components';
 import { openDialog } from '../../base/dialog';
+import axios from 'axios';
 
 /* Ater */
 
@@ -40,7 +41,7 @@ class HangupButton extends AbstractHangupButton<Props, *> {
     _hangup: Function;
 
     accessibilityLabel = 'toolbar.accessibilityLabel.hangup';
-    label = 'toolbar.hangup';
+    label = '挂断';
     tooltip = 'toolbar.hangup';
 
     /**
@@ -72,15 +73,35 @@ class HangupButton extends AbstractHangupButton<Props, *> {
      * @returns {void}
      */
     _doHangup() {
-
+        console.log(this.props._roomNumber)
+        console.log(this.props._userId)
         /* Ater */
         if (recordingController.getLocalStats().isRecording) {
             /* Ater */
             this.props.dispatch(openDialog(LocalRecordingInfoDialog));
         } else {
+            console.log(navigator.product)
+            if (navigator.product !== 'ReactNative') {
+                axios.post('https://test.lawbal.com/lvbao/conference/joinOrExist', {
+                    roomNum: this.props._roomNumber,
+                    conferenceId: window.location.pathname.substr(1),
+                    status: '1',
+                    userId: this.props._userId
+                }).then(() => {
+
+                })
+            }
             this._hangup();
         }
     }
 }
 
-export default translate(connect()(HangupButton));
+function _mapStateToProps(state) {
+    return {
+        _userId: state['features/base/conference'].userId,
+        _roomNumber: state['features/base/conference'].roomNumber
+    };
+}
+
+
+export default translate(connect(_mapStateToProps)(HangupButton));

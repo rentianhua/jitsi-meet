@@ -189,6 +189,10 @@ export const SET_MAX_RECEIVER_VIDEO_QUALITY
  */
 export const SET_PASSWORD = 'SET_PASSWORD';
 
+export const SET_USERINFO = 'SET_USERINFO';
+
+export const SET_INVITING_LIST = 'SET_INVITING_LIST';
+
 /**
  * The type of (redux) action which signals that setting a password on a
  * {@code JitsiConference} failed (with an error).

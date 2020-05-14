@@ -2,7 +2,7 @@ import { BoxModel, ColorPalette, fixAndroidViewClipping } from '../../../base/st
 import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
 import { FILMSTRIP_SIZE } from '../../../filmstrip';
 
-export const NAVBAR_GRADIENT_COLORS = [ '#000000FF', '#00000000' ];
+export const NAVBAR_GRADIENT_COLORS = [ 'transparent', 'transparent' ];
 
 // From brand guideline
 const BOTTOM_GRADIENT_HEIGHT = 290;
@@ -134,10 +134,18 @@ export default {
         opacity: 0.6
     },
 
-    roomName: {
+    meetTitle: {
         color: ColorPalette.white,
-        fontSize: 17,
+        fontSize: 20,
+        marginTop: 30,
         fontWeight: '400'
+    },
+
+    roomName: {
+        color: '#ffffffa3',
+        fontSize: 16,
+        fontWeight: '400',
+        marginTop: 10
     },
 
     roomNameWrapper: {

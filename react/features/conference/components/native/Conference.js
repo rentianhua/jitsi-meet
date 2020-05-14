@@ -313,9 +313,9 @@ class Conference extends AbstractConference<Props, *> {
 
                     <Captions onPress = { this._onClick } />
 
-                    { _shouldDisplayTileView || <DisplayNameLabel participantId = { _largeVideoParticipantId } /> }
+                    <DisplayNameLabel participantId = { _largeVideoParticipantId } />
 
-                    <LonelyMeetingExperience />
+                    {/*<LonelyMeetingExperience />*/}
 
                     {/*
                       * The Toolbox is in a stacking layer below the Filmstrip.

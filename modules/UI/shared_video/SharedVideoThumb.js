@@ -19,6 +19,7 @@ export default class SharedVideoThumb extends SmallVideo {
         this.id = participant.id;
         this.isLocal = false;
         this.url = participant.id;
+        this.setVideoType(videoType);
         this.videoSpanId = 'sharedVideoContainer';
         this.container = this.createContainer(this.videoSpanId);
         this.$container = $(this.container);

@@ -8,9 +8,10 @@ import { getConferenceName } from '../../../base/conference';
 import { connect } from '../../../base/redux';
 import { PictureInPictureButton } from '../../../mobile/picture-in-picture';
 import { isToolboxVisible } from '../../../toolbox';
-
+import axios from 'axios';
 import ConferenceTimer from '../ConferenceTimer';
 import styles, { NAVBAR_GRADIENT_COLORS } from './styles';
+import _ from "lodash";
 
 type Props = {
 
@@ -35,11 +36,32 @@ class NavigationBar extends Component<Props> {
      *
      * @inheritdoc
      */
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            roomNum: '',
+            meetTitle: ''
+        };
+    }
+
+
+    componentDidMount() {
+        console.log(this.props._meetingName)
+        axios.post('https://test.lawbal.com/lvbao/conference/info/' + this.props._meetingName, {}).then((res) => {
+            if (res.data.code === 0) {
+                this.setState({
+                    roomNum: res.data.info.roomNum,
+                    meetTitle: res.data.info.conferenceTitle
+                })
+            }
+        })
+    }
+
     render() {
         if (!this.props._visible) {
             return null;
         }
-
+        const { roomNum, meetTitle } = this.state;
         return [
             <LinearGradient
                 colors = { NAVBAR_GRADIENT_COLORS }
@@ -59,12 +81,21 @@ class NavigationBar extends Component<Props> {
                 <View
                     pointerEvents = 'box-none'
                     style = { styles.roomNameWrapper }>
-                    {/*<Text*/}
-                    {/*    numberOfLines = { 1 }*/}
-                    {/*    style = { styles.roomName }>*/}
-                    {/*    { this.props._meetingName }*/}
-                    {/*</Text>*/}
-                    <ConferenceTimer />
+                    {
+                        meetTitle ? <Text
+                            numberOfLines = { 1 }
+                            style = { styles.meetTitle }>
+                            { meetTitle }
+                        </Text> : null
+                    }
+                    {
+                        roomNum ? <Text
+                            numberOfLines = { 1 }
+                            style = { styles.roomName }>
+                            (房间号: { roomNum })
+                        </Text> : null
+                    }
+                    {/*<ConferenceTimer />*/}
                 </View>
             </View>
         ];

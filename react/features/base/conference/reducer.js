@@ -17,28 +17,31 @@ import {
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
     SET_DESKTOP_SHARING_ENABLED,
-    SET_FOLLOW_ME,
+    SET_FOLLOW_ME, SET_INVITING_LIST,
     SET_MAX_RECEIVER_VIDEO_QUALITY,
     SET_PASSWORD,
     SET_PENDING_SUBJECT_CHANGE,
     SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
     SET_ROOM,
     SET_SIP_GATEWAY_ENABLED,
-    SET_START_MUTED_POLICY
+    SET_START_MUTED_POLICY,
+    SET_USERINFO
 } from './actionTypes';
 import { VIDEO_QUALITY_LEVELS } from './constants';
 import { isRoomValid } from './functions';
 
 const DEFAULT_STATE = {
     conference: undefined,
-    e2eeSupported: undefined,
     joining: undefined,
     leaving: undefined,
     locked: undefined,
     maxReceiverVideoQuality: VIDEO_QUALITY_LEVELS.HIGH,
     password: undefined,
     passwordRequired: undefined,
-    preferredReceiverVideoQuality: VIDEO_QUALITY_LEVELS.HIGH
+    preferredReceiverVideoQuality: VIDEO_QUALITY_LEVELS.HIGH,
+    userId: '',
+    roomNumber: '',
+    invitingList: []
 };
 
 /**
@@ -119,8 +122,18 @@ ReducerRegistry.register(
                 startAudioMutedPolicy: action.startAudioMutedPolicy,
                 startVideoMutedPolicy: action.startVideoMutedPolicy
             };
+        case SET_USERINFO:
+            return {
+                ...state,
+                userId: action.userId,
+                roomNumber: action.roomNumber
+            };
+        case SET_INVITING_LIST:
+            return {
+                ...state,
+                invitingList: action.invitingList
+            };
         }
-
         return state;
     });
 
@@ -176,7 +189,6 @@ function _conferenceFailed(state, { conference, error }) {
     return assign(state, {
         authRequired,
         conference: undefined,
-        e2eeSupported: undefined,
         error,
         joining: undefined,
         leaving: undefined,
@@ -228,9 +240,6 @@ function _conferenceJoined(state, { conference }) {
          * @type {JitsiConference}
          */
         conference,
-
-        e2eeSupported: conference.isE2EESupported(),
-
         joining: undefined,
         leaving: undefined,
 

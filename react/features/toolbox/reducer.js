@@ -107,7 +107,10 @@ function _getInitialState() {
          *
          * @type {boolean}
          */
-        visible
+        visible,
+        isGroup: false,
+        isProd: true,
+        userId: ''
     };
 }
 

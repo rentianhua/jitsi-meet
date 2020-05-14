@@ -518,7 +518,6 @@ const VideoLayout = {
         if (this.isCurrentlyOnLarge(id) || newVideoType === DESKTOP_CONTAINER_TYPE) {
             this.updateLargeVideo(id, true);
         }
-
         /** ****************Ater********************************/
 
         this._updateLargeVideoIfDisplayed(id, true);

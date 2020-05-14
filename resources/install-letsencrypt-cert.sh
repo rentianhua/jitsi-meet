@@ -50,18 +50,13 @@ if [ -f /etc/nginx/sites-enabled/$DOMAIN.conf ] ; then
         cp /usr/share/jitsi-meet-turnserver/coturn-certbot-deploy.sh $TURN_HOOK
         chmod u+x $TURN_HOOK
         sed -i "s/jitsi-meet.example.com/$DOMAIN/g" $TURN_HOOK
-
-        ./certbot-auto certonly --noninteractive \
-        --webroot --webroot-path /usr/share/jitsi-meet \
-        -d $DOMAIN \
-        --agree-tos --email $EMAIL \
-        --deploy-hook $TURN_HOOK
-    else
-        ./certbot-auto certonly --noninteractive \
-        --webroot --webroot-path /usr/share/jitsi-meet \
-        -d $DOMAIN \
-        --agree-tos --email $EMAIL
     fi
+
+    ./certbot-auto certonly --noninteractive \
+    --webroot --webroot-path /usr/share/jitsi-meet \
+    -d $DOMAIN \
+    --agree-tos --email $EMAIL \
+    --deploy-hook $TURN_HOOK
 
     echo "Configuring nginx"
 

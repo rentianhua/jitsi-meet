@@ -109,12 +109,12 @@ class VideoSettingsButton extends Component<Props, State> {
 
         return visible ? (
             <VideoSettingsPopup>
-                <ToolboxButtonWithIcon
-                    icon = { IconArrowDown }
-                    iconDisabled = { iconDisabled }
-                    onIconClick = { onVideoOptionsClick }>
-                    <VideoMuteButton />
-                </ToolboxButtonWithIcon>
+                {/*<ToolboxButtonWithIcon*/}
+                    {/*icon = { IconArrowDown }*/}
+                    {/*iconDisabled = { iconDisabled }*/}
+                    {/*onIconClick = { onVideoOptionsClick }>*/}
+                <VideoMuteButton />
+                {/*</ToolboxButtonWithIcon>*/}
             </VideoSettingsPopup>
         ) : null;
     }

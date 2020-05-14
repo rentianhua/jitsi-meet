@@ -107,7 +107,7 @@ class JitsiModal extends PureComponent<Props> {
                 position = { position }
                 show = { _show }>
                 <KeyboardAvoidingView
-                    behavior = 'height'
+                    behavior = 'padding'
                     style = { [
                         _headerStyles.page,
                         _styles.page,

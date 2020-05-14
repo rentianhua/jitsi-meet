@@ -4,7 +4,7 @@ import { StyleSheet } from 'react-native';
 
 import { BoxModel, ColorPalette } from '../../base/styles';
 
-export const PLACEHOLDER_TEXT_COLOR = 'rgba(255, 255, 255, 0.5)';
+export const PLACEHOLDER_TEXT_COLOR = 'rgba(255, 255, 255, 0.3)';
 
 export const SIDEBAR_AVATAR_SIZE = 100;
 

@@ -183,7 +183,6 @@ class Conference extends AbstractConference<Props, *> {
                 || VIDEO_QUALITY_LABEL_DISABLED
                 || this.props._iAmRecorder;
 
-        /** ****************Ater********************************/
         return (
             <div
                 className = { this.props._layoutClassName }
@@ -193,8 +192,8 @@ class Conference extends AbstractConference<Props, *> {
                 <Subject />
                 <div id = 'videospace'>
                     <LargeVideo />
-                    { hideVideoQualityLabel
-                        || <Labels /> }
+                    {/*{ hideVideoQualityLabel*/}
+                        {/*|| <Labels /> }*/}
                     <Filmstrip filmstripOnly = { filmstripOnly } />
                 </div>
 
