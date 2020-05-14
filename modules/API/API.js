@@ -561,6 +561,12 @@ class API {
         });
     }
 
+    notifyInvitePerson() {
+        this._sendEvent({
+            name: 'invite-person'
+        });
+    }
+
     /**
      * Notify external application (if API is enabled) that we are ready to be
      * closed.

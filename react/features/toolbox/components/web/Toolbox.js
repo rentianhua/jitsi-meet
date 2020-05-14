@@ -19,6 +19,8 @@ import {
     IconOpenInNew,
     IconPresentation,
     IconRaisedHand,
+    InvitePerson,
+    SharePerson,
     IconRec,
     IconShareDesktop,
     IconShareVideo
@@ -814,6 +816,12 @@ class Toolbox extends Component<Props, State> {
         this._doToggleRaiseHand();
     }
 
+    _onToolbarToggleInvitePerson: () => void;
+
+    _onToolbarToggleInvitePerson = () => {
+        APP.API.notifyInvitePerson();
+    }
+
     _onToolbarToggleScreenshare: () => void;
 
     /**
@@ -1154,7 +1162,8 @@ class Toolbox extends Component<Props, State> {
             _hideInviteButton,
             _overflowMenuVisible,
             _raisedHand,
-            t
+            t,
+            _roomNumber
         } = this.props;
         const overflowMenuContent = this._renderOverflowMenuContent();
         const overflowHasItems = Boolean(overflowMenuContent.filter(child => child).length);
@@ -1232,7 +1241,6 @@ class Toolbox extends Component<Props, State> {
 
         overflowMenuContent.splice(
             1, 0, ...this._renderMovedButtons(movedButtons));
-
         return (
             <div className = 'toolbox-content'>
                 <div className = 'button-group-left'>
@@ -1245,6 +1253,21 @@ class Toolbox extends Component<Props, State> {
                             onClick = { this._onToolbarToggleRaiseHand }
                             toggled = { _raisedHand }
                             tooltip = { t('toolbar.raiseHand') } /> }
+                    {
+                        _roomNumber && <ToolbarButton
+                            accessibilityLabel = '邀请加入'
+                            label = '邀请加入'
+                            icon = { InvitePerson }
+                            onClick = { this._onToolbarToggleInvitePerson }
+                            tooltip = '邀请加入' />
+                    }
+                    {/*<ToolbarButton*/}
+                        {/*accessibilityLabel = '分享'*/}
+                        {/*label = '分享'*/}
+                        {/*icon = { SharePerson }*/}
+                        {/*onClick = { this._onToolbarToggleRaiseHand }*/}
+                        {/*toggled = { _raisedHand }*/}
+                        {/*tooltip = '分享' />*/}
                     { buttonsLeft.indexOf('chat') !== -1
                         && <div className = 'toolbar-button-with-badge'>
                             <ToolbarButton
@@ -1259,6 +1282,9 @@ class Toolbox extends Component<Props, State> {
                         {/*buttonsRight.indexOf('info') !== -1*/}
                         {/*&& <InfoDialogButton />*/}
                     {/*}*/}
+                    {
+                        _roomNumber && <InfoDialogButton />
+                    }
                     {
                         buttonsLeft.indexOf('closedcaptions') !== -1
                             && <ClosedCaptionButton />
@@ -1387,7 +1413,8 @@ function _mapStateToProps(state) {
             || sharedVideoStatus === 'pause',
         _visible: isToolboxVisible(state),
         _visibleButtons: equals(visibleButtons, buttons) ? visibleButtons : buttons,
-        _rightMenuVisible: visible
+        _rightMenuVisible: visible,
+        _roomNumber: state['features/base/conference'].roomNumber
     };
 }
 

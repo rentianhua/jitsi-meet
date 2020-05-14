@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { NativeModules, SafeAreaView, StatusBar } from 'react-native';
+import { NativeModules, SafeAreaView, StatusBar, UIManager, findNodeHandle } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 import { appNavigate } from '../../../app';
@@ -123,6 +123,11 @@ class Conference extends AbstractConference<Props, *> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
+
+    state = {
+        screenWidth: 0
+    }
+
     constructor(props) {
         super(props);
 
@@ -163,12 +168,20 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {ReactElement}
      */
     render() {
+        if (this.container) {
+            UIManager.measure(findNodeHandle(this.container), (x, y, width, height, pageX, pageY) => {
+                this.setState({
+                    screenWidth: width
+                })
+            });
+        }
         return (
-            <Container style = { styles.conference }>
-                <StatusBar
-                    barStyle = 'light-content'
-                    hidden = { true }
-                    translucent = { true } />
+            <Container ref={c => this.container = c} style = { styles.conference }>
+                {/*显示隐藏顶部菜单*/}
+                {/*<StatusBar*/}
+                    {/*barStyle = 'light-content'*/}
+                    {/*hidden = { true }*/}
+                    {/*translucent = { true } />*/}
                 { this._renderContent() }
             </Container>
         );
@@ -262,6 +275,7 @@ class Conference extends AbstractConference<Props, *> {
         if (_reducedUI) {
             return this._renderContentForReducedUi();
         }
+        const { screenWidth } = this.state
 
         return (
             <>
@@ -288,41 +302,42 @@ class Conference extends AbstractConference<Props, *> {
                             <LoadingIndicator />
                         </TintedView>
                 }
+                {
+                    screenWidth >= 300 && <SafeAreaView
+                        pointerEvents = 'box-none'
+                        style = { styles.toolboxAndFilmstripContainer }>
 
-                <SafeAreaView
-                    pointerEvents = 'box-none'
-                    style = { styles.toolboxAndFilmstripContainer }>
+                        { showGradient && <LinearGradient
+                            colors = { NAVBAR_GRADIENT_COLORS }
+                            end = {{
+                                x: 0.0,
+                                y: 0.0
+                            }}
+                            pointerEvents = 'none'
+                            start = {{
+                                x: 0.0,
+                                y: 1.0
+                            }}
+                            style = { [
+                                styles.bottomGradient,
+                                applyGradientStretching ? styles.gradientStretchBottom : undefined
+                            ] } />}
 
-                    { showGradient && <LinearGradient
-                        colors = { NAVBAR_GRADIENT_COLORS }
-                        end = {{
-                            x: 0.0,
-                            y: 0.0
-                        }}
-                        pointerEvents = 'none'
-                        start = {{
-                            x: 0.0,
-                            y: 1.0
-                        }}
-                        style = { [
-                            styles.bottomGradient,
-                            applyGradientStretching ? styles.gradientStretchBottom : undefined
-                        ] } />}
+                        <Labels />
 
-                    <Labels />
+                        <Captions onPress = { this._onClick } />
 
-                    <Captions onPress = { this._onClick } />
+                        <DisplayNameLabel participantId = { _largeVideoParticipantId } />
 
-                    <DisplayNameLabel participantId = { _largeVideoParticipantId } />
+                        {/*<LonelyMeetingExperience />*/}
 
-                    {/*<LonelyMeetingExperience />*/}
-
-                    {/*
+                        {/*
                       * The Toolbox is in a stacking layer below the Filmstrip.
                       */}
-                    <Toolbox />
 
-                    {/*
+                        <Toolbox />
+
+                        {/*
                       * The Filmstrip is in a stacking layer above the
                       * LargeVideo. The LargeVideo and the Filmstrip form what
                       * the Web/React app calls "videospace". Presumably, the
@@ -330,16 +345,19 @@ class Conference extends AbstractConference<Props, *> {
                       * React Components depict the videos of the conference's
                       * participants.
                       */
-                        _shouldDisplayTileView ? undefined : <Filmstrip />
-                    }
-                </SafeAreaView>
+                            _shouldDisplayTileView ? undefined : <Filmstrip />
+                        }
+                    </SafeAreaView>
+                }
 
-                <SafeAreaView
-                    pointerEvents = 'box-none'
-                    style = { styles.navBarSafeView }>
-                    <NavigationBar />
-                    { this._renderNotificationsContainer() }
-                </SafeAreaView>
+                {
+                    screenWidth >= 300 &&  <SafeAreaView
+                        pointerEvents = 'box-none'
+                        style = { styles.navBarSafeView }>
+                        <NavigationBar />
+                        { this._renderNotificationsContainer() }
+                    </SafeAreaView>
+                }
 
                 <TestConnectionInfo />
 
@@ -433,7 +451,7 @@ function _mapStateToProps(state) {
         joining,
         leaving
     } = state['features/base/conference'];
-    const { reducedUI } = state['features/base/responsive-ui'];
+    const { reducedUI, clientWidth } = state['features/base/responsive-ui'];
 
     // XXX There is a window of time between the successful establishment of the
     // XMPP connection and the subsequent commencement of joining the MUC during
@@ -450,6 +468,7 @@ function _mapStateToProps(state) {
     return {
         ...abstractMapStateToProps(state),
 
+        _clientWidth: clientWidth,
         /**
          * Wherther the calendar feature is enabled or not.
          *

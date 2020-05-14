@@ -78,7 +78,8 @@ const events = {
     'dominant-speaker-changed': 'dominantSpeakerChanged',
     'subject-change': 'subjectChange',
     'suspend-detected': 'suspendDetected',
-    'tile-view-changed': 'tileViewChanged'
+    'tile-view-changed': 'tileViewChanged',
+    'invite-person': 'invitePerson',
 };
 
 /**
@@ -435,7 +436,6 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 this._participants[userID] = {
                     avatarURL: data.avatarURL
                 };
-                console.log('video-conference-joined')
 
             // eslint-disable-next-line no-fallthrough
             case 'participant-joined': {
@@ -486,6 +486,9 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             case 'video-conference-left':
                 changeParticipantNumber(this, -1);
                 delete this._participants[this._myUserID];
+                break;
+            case 'invite-person':
+                console.log('invite person')
                 break;
             }
 

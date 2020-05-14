@@ -7,7 +7,7 @@ import type { Dispatch } from 'redux';
 import { createToolbarEvent, sendAnalytics } from '../../../../analytics';
 import { openDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
-import { IconInfo } from '../../../../base/icons';
+import { SharePerson } from '../../../../base/icons';
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
 import { getParticipantCount } from '../../../../base/participants';
 import { OverflowMenuItem } from '../../../../base/toolbox';
@@ -179,10 +179,11 @@ class InfoDialogButton extends Component<Props, State> {
                     onClose = { this._onDialogClose }
                     position = { 'top center' }>
                     <ToolbarButton
-                        accessibilityLabel = { t('info.accessibilityLabel') }
-                        icon = { IconInfo }
+                        accessibilityLabel = '分享'
+                        label = '分享'
+                        icon = { SharePerson }
                         onClick = { this._onDialogToggle }
-                        tooltip = { t('info.tooltip') } />
+                        tooltip = '分享' />
                 </InlineDialog>
             </div>
         );

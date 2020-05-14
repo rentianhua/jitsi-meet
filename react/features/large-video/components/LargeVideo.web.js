@@ -70,7 +70,7 @@ class LargeVideo extends Component<Props> {
                         <div className = 'meet-title-text'>
                             { isEdit ? (
                                     <div className = 'title-input'>
-                                        <input type = 'text' value={ meetTitle } ref={i => this.titleInput = i} onInput={ this.handleInputChange } />
+                                        <input type = 'text' value={ meetTitle } maxlength = '20' ref={i => this.titleInput = i} onInput={ this.handleInputChange } />
                                         <span></span>
                                     </div>
                                 ) : <span className = 'title-text'>{ realMeetTitle }</span>

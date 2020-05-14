@@ -8,6 +8,7 @@ import { getInviteURL } from '../../../../base/connection';
 import { Dialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { Icon, IconInfo, IconCopy } from '../../../../base/icons';
+import axios from 'axios';
 import { connect } from '../../../../base/redux';
 import {
     isLocalParticipantModerator,
@@ -20,6 +21,7 @@ import {
     getDialInfoPageURL,
     shouldDisplayDialIn
 } from '../../../functions';
+import copy from 'copy-to-clipboard';
 import logger from '../../../logger';
 import DialInNumber from './DialInNumber';
 import PasswordForm from './PasswordForm';
@@ -170,7 +172,12 @@ class InfoDialog extends Component<Props, State> {
      */
     state = {
         passwordEditEnabled: false,
-        phoneNumber: undefined
+        phoneNumber: undefined,
+        roomNum: '',
+        meetTitle: '',
+        time: '',
+        userName: '',
+        hasCopy: false
     };
 
     /**
@@ -209,6 +216,19 @@ class InfoDialog extends Component<Props, State> {
         this._setCopyUrlElement = this._setCopyUrlElement.bind(this);
     }
 
+    componentDidMount() {
+        axios.post('https://test.lawbal.com/lvbao/conference/info/' + window.location.pathname.substr(1), {}).then((res) => {
+            if (res.data.code === 0) {
+                this.setState({
+                    roomNum: res.data.info.roomNum,
+                    meetTitle: res.data.info.conferenceTitle,
+                    time: res.data.info.createTime,
+                    userName: res.data.info.userName
+                })
+            }
+        })
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -222,6 +242,7 @@ class InfoDialog extends Component<Props, State> {
             onMouseOver,
             t
         } = this.props;
+        const { roomNum, meetTitle, time, hasCopy } = this.state;
 
         const inlineDialog = (
             <div
@@ -235,14 +256,15 @@ class InfoDialog extends Component<Props, State> {
                 <div className = 'info-dialog-column'>
                     <div className = 'info-dialog-title'>
                         {/*{ t('info.tiinfo-labeltle') }*/}
-                        <p>会议主题: XXXXXXXXX</p>
+                        <p>会议主题: { meetTitle || '暂无' }</p>
+                        <p>会议时间: { time || '暂无' }</p>
                     </div>
                     <div className = 'info-dialog-conference-url'>
                         {/*<span className = 'info-label'>*/}
                             {/*{ t('info.conferenceURL') }*/}
                         {/*</span>*/}
                         {/*<span className = 'spacer'>&nbsp;</span>*/}
-                        <p>点击链接直接加入会议</p>
+                        <p style = {{ marginBottom: 0 }}>会议链接 (复制到浏览器地址栏)</p>
                         <p className = 'info-value'>
                             <a
                                 className = 'info-dialog-url-text info-dialog-url-text-unselectable'
@@ -281,10 +303,14 @@ class InfoDialog extends Component<Props, State> {
                         {/*</div>*/}
                         {/*{ this._renderPasswordAction() }*/}
                     {/*</div>*/}
-                    <p>会议ID: 586 196 256</p>
-                    <div style={{ 'text-align': 'center' }}>
-                        <span className="copyBtn">复制</span>
-                    </div>
+                    <p>房间号: { roomNum || '暂无' }</p>
+                    {
+                        !hasCopy ?  <div style={{ 'text-align': 'center' }} onClick = { this.handleClickCopy }>
+                            <span className="copyBtn">复制</span>
+                        </div> :  <div style={{ 'text-align': 'center' }}>
+                            <span className="hasCopyBtn">已复制</span>
+                        </div>
+                    }
                 </div>
                 <textarea
                     className = 'info-dialog-copy-element'
@@ -314,6 +340,22 @@ class InfoDialog extends Component<Props, State> {
                 { inlineDialog }
             </Dialog>
         );
+    }
+
+    handleClickCopy = () => {
+        copy(`${ this.state.userName } 邀请您参加律宝视频会议
+会议主题: ${this.state.meetTitle }
+房间号: ${this.state.roomNum }
+会议链接: ${ decodeURI(this._getURLToDisplay()) }`)
+
+        this.setState({
+            hasCopy: true
+        })
+        setTimeout(() => {
+            this.setState({
+                hasCopy: false
+            })
+        }, 3000)
     }
 
     /**

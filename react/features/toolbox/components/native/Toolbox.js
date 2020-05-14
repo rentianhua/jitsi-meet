@@ -17,7 +17,7 @@ import AudioMuteButton from '../AudioMuteButton';
 import HangupButton from '../HangupButton';
 import { setUserInfo } from '../../actions.native'
 
-// import OverflowMenuButton from './OverflowMenuButton';
+import OverflowMenuButton from './OverflowMenuButton';
 import styles from './styles';
 import VideoMuteButton from '../VideoMuteButton';
 import ToggleCameraButton from './ToggleCameraButton';
@@ -205,9 +205,9 @@ class Toolbox extends PureComponent<Props> {
                         {/*toggledStyles = { toggledButtonStyles }*/}
                     {/*/> : null*/}
                 {/*}*/}
-                {/*<OverflowMenuButton*/}
-                    {/*styles = { buttonStylesBorderless }*/}
-                    {/*toggledStyles = { toggledButtonStyles } />*/}
+                <OverflowMenuButton
+                    styles = { buttonStylesBorderless }
+                    toggledStyles = { toggledButtonStyles } />
             </View>
         );
     }

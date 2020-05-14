@@ -18,14 +18,14 @@
         "title": "Invite people to this meeting"
     },
     "audioDevices": {
-        "bluetooth": "Bluetooth",
-        "headphones": "Headphones",
-        "phone": "Phone",
-        "speaker": "Speaker",
-        "none": "No audio devices available"
+        "bluetooth": "蓝牙",
+        "headphones": "耳机",
+        "phone": "电话",
+        "speaker": "发言人",
+        "none": "没有可用的音频设备"
     },
     "audioOnly": {
-        "audioOnly": "Low bandwidth"
+        "audioOnly": "低带宽"
     },
     "calendarSync": {
         "addMeetingURL": "Add a meeting link",
@@ -361,7 +361,7 @@
         "localRecording": "Show or hide local recording controls",
         "mute": "Mute or unmute your microphone",
         "pushToTalk": "Push to talk",
-        "raiseHand": "Raise or lower your hand",
+        "raiseHand": "申请或取消发言",
         "showSpeakerStats": "Show speaker stats",
         "toggleChat": "Open or close the chat",
         "toggleFilmstrip": "Show or hide video thumbnails",
@@ -592,7 +592,7 @@
     "toolbar": {
         "accessibilityLabel": {
             "audioOnly": "Toggle audio only",
-            "audioRoute": "Select the sound device",
+            "audioRoute": "选择声音输出设备",
             "callQuality": "Manage video quality",
             "cc": "Toggle subtitles",
             "chat": "Toggle chat window",
@@ -626,7 +626,7 @@
             "show": "Show on stage",
             "speakerStats": "Toggle speaker statistics",
             "tileView": "Toggle tile view",
-            "toggleCamera": "Toggle camera",
+            "toggleCamera": "切换摄像头",
             "toggleFilmstrip": "Toggle filmstrip",
             "videomute": "Toggle mute video",
             "videoblur": "Toggle video blur"
@@ -634,7 +634,7 @@
         "addPeople": "Add people to your call",
         "audioOnlyOff": "开启视频和语音",
         "audioOnlyOn": "只开启语音",
-        "audioRoute": "Select the sound device",
+        "audioRoute": "选择声音输出设备",
         "authenticate": "Authenticate",
         "callQuality": "Manage video quality",
         "chat": "Open / Close chat",
@@ -653,7 +653,7 @@
         "invite": "Invite people",
         "login": "Login",
         "logout": "Logout",
-        "lowerYourHand": "Lower your hand",
+        "lowerYourHand": "取消发言",
         "moreActions": "更多操作",
         "moreOptions": "更多操作",
         "mute": "Mute / Unmute",
@@ -669,8 +669,8 @@
         "pip": "Enter Picture-in-Picture mode",
         "privateMessage": "Send private message",
         "profile": "Edit your profile",
-        "raiseHand": "Raise / Lower your hand",
-        "raiseYourHand": "Raise your hand",
+        "raiseHand": "申请或取消发言",
+        "raiseYourHand": "举手发言",
         "Settings": "Settings",
         "sharedvideo": "Share a YouTube video",
         "shareRoom": "Invite someone",
@@ -683,7 +683,7 @@
         "stopSharedVideo": "Stop YouTube video",
         "talkWhileMutedPopup": "Trying to speak? You are muted.",
         "tileViewToggle": "Toggle tile view",
-        "toggleCamera": "Toggle camera",
+        "toggleCamera": "切换摄像头",
         "videomute": "Start / Stop camera",
         "startvideoblur": "Blur my background",
         "stopvideoblur": "Disable background blur"

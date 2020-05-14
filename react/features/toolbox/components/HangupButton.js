@@ -73,8 +73,6 @@ class HangupButton extends AbstractHangupButton<Props, *> {
      * @returns {void}
      */
     _doHangup() {
-        console.log(this.props._roomNumber)
-        console.log(this.props._userId)
         /* Ater */
         if (recordingController.getLocalStats().isRecording) {
             /* Ater */

@@ -85,3 +85,5 @@ export { default as IconVolumeEmpty } from './volume-empty.svg';
 export { default as PictureMode } from './pictureMode.svg';
 export { default as ListMode } from './listMode.svg';
 export { default as PersonnelManagement } from './personnel-management.svg';
+export { default as InvitePerson } from './invite-person.svg';
+export { default as SharePerson } from './share-person.svg';
