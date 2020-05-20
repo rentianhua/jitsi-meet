@@ -51,7 +51,7 @@ import {
     SET_USERINFO,
     SET_INVITING_LIST,
     SET_PASSWORD_FAILED,
-    SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
+    SET_PREFERRED_VIDEO_QUALITY,
     SET_ROOM,
     SET_PENDING_SUBJECT_CHANGE,
     SET_START_MUTED_POLICY
@@ -734,21 +734,20 @@ export function setInvitingList(conferenceId: String) {
 
 
 /**
- * Sets the max frame height the user prefers to receive from remote participant
- * videos.
+ * Sets the max frame height the user prefers to send and receive from the
+ * remote participants.
  *
- * @param {number} preferredReceiverVideoQuality - The max video resolution to
+ * @param {number} preferredVideoQuality - The max video resolution to send and
  * receive.
  * @returns {{
- *     type: SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
- *     preferredReceiverVideoQuality: number
+ *     type: SET_PREFERRED_VIDEO_QUALITY,
+ *     preferredVideoQuality: number
  * }}
  */
-export function setPreferredReceiverVideoQuality(
-        preferredReceiverVideoQuality: number) {
+export function setPreferredVideoQuality(preferredVideoQuality: number) {
     return {
-        type: SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
-        preferredReceiverVideoQuality
+        type: SET_PREFERRED_VIDEO_QUALITY,
+        preferredVideoQuality
     };
 }
 
